@@ -113,5 +113,20 @@ class NubotCell:
     Cells of the Nubot model. Is supposed to live on the HexGrid.
     """
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, state):
+        self.state = state
+
+    def get_state(self):
+        return self.state
+
+    def set_state(self, state):
+        self.state = state
+
+    def simple_forward(self, neighbours=[]):
+        #neighbours is list of six adjacent neighbour cells in order as defined in HexGrid.get_six_neighbours()
+        if not neighbours:# if list is empty
+            return 1
+        if self.state == 1 and neighbours[2].get_state() == 1 and neighbours[3].get_state() == 0:#1=occupied, 0=unoccupied
+            neighbours[3].set_state(1) #update next neighbour
+
+        return 0
