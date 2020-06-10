@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Cell:
     """ The automaton class implements the topology (here a simple 1-D lattice), the
@@ -105,6 +106,37 @@ class HexGrid:
         y = (y+w)%self.height
 
         return self.cells[x][y]
+
+    def plot_states(self, states=[]):
+
+        """
+        states: which states are supposed to be plotted
+        returns figure and axis with scatterplot
+
+        use like:
+
+        grid.plot_states(states=[1,2,3])
+        plt.show()
+        """
+
+        xvals = []
+        yvals = []
+        cellstates = []
+
+        for w in range(self.width):
+            for h in range(self.height):
+                state = self.cells[w][h].get_state()
+                if state in states:
+                    xvals += [(w+h/2)%self.width]
+                    yvals += [h]
+                    cellstates += [state]
+
+
+        fig = plt.figure()
+        ax = fig.add_subplot(1,1,1)
+        ax.scatter(xvals, yvals, c=cellstates, cmap="tab20")
+
+        return fig, ax
 
 
 
