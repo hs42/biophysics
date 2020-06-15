@@ -94,7 +94,7 @@ class HexGrid:
         """
         left = (x-1)%self.width
         right = (x+1)%self.width
-        up = (y+1)%self.heigth
+        up = (y+1)%self.height
         down = (y-1)%self.height
 
         return [self.cells[left][up], self.cells[x][up], 
@@ -138,6 +138,13 @@ class HexGrid:
 
         return fig, ax
 
+    def perform_step(self):
+        for i,j in np.ndindex(self.height, self.width):
+            self.get_cell(i,j).simple_forward(self.get_six_neighbours(i,j))
+        
+        for i,j in np.ndindex(self.height, self.width):
+            self.get_cell(i,j).update()
+
 
 
 class NubotCell:
@@ -147,18 +154,29 @@ class NubotCell:
 
     def __init__(self, state):
         self.state = state
+        self.new_state = state
 
     def get_state(self):
         return self.state
 
     def set_state(self, state):
         self.state = state
+        self.new_state = state
+    
+    def queue_state(self, state):
+        """
+        queues new state, needs to update() after
+        """ 
+        self.new_state = state
+
+    def update(self):
+        self.state = self.new_state
 
     def simple_forward(self, neighbours=[]):
         #neighbours is list of six adjacent neighbour cells in order as defined in HexGrid.get_six_neighbours()
         if not neighbours:# if list is empty
             return 1
         if self.state == 1 and neighbours[2].get_state() == 1 and neighbours[3].get_state() == 0:#1=occupied, 0=unoccupied
-            neighbours[3].set_state(1) #update next neighbour
+            neighbours[3].queue_state(1) #update next neighbour
 
         return 0
