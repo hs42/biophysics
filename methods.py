@@ -145,6 +145,38 @@ class HexGrid:
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).update()
 
+    def simple_turn(self, direction, pivot):
+        """
+        now moved to grid to get access to neighbours
+
+        a first trial to implement a rotating arm
+        Note that this function is rather a quick hack. 
+        You'd rather want to implement it by using bonds and checking if a movement is possible in the first place
+        in: expects a line of monomers to start with; initial kink at pivoting monomer must have been initialized by user. direction in {1,...,6 } correspoding to sites of neighbours
+        out: produces line with a a kink
+        state 0: lattice size free
+        state 1: monomer exists
+        state 2: pivoting monomer or just moved. it remains static
+
+        fct = translate cell by direction
+        recursive -> apply functions for all neighbours. some are bound to not change
+        """
+
+        # firstly translate first cell
+        self.get_cell(pivot).set_state(2)
+        
+        for n in self.get_cell(pivot).get_six_neighbours():
+            if n.get_state() is not 2 and if n.get_state() is not 0:
+                # verschiebe
+                # rufe fkt rekursiv auf 
+
+        neighbours[direction].set_state(2)
+        self.set_state(0)
+
+        for n in neighbours:
+            if n is not direction and n.get_state() is not 2:
+                n.simple_turn(direction, ) 
+
 
 
 class NubotCell:
@@ -180,3 +212,5 @@ class NubotCell:
             neighbours[3].queue_state(1) #update next neighbour
 
         return 0
+
+    
