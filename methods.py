@@ -2,6 +2,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+translate_neighbours = [np.array([-1, 1]), np.array([0, 1]), np.array([-1, 0]), np.array([1, 0]), np.array([-1, -1]), np.array([-1, 0])]
+
 class Cell:
     """ The automaton class implements the topology (here a simple 1-D lattice), the
         initialization and the generation of the next step with the implementation of
@@ -153,6 +155,7 @@ class HexGrid:
         Note that this function is rather a quick hack. 
         You'd rather want to implement it by using bonds and checking if a movement is possible in the first place
         in: expects a line of monomers to start with; initial kink at pivoting monomer must have been initialized by user. direction in {1,...,6 } correspoding to sites of neighbours
+            pivot = np.array([x,y]), direction also np-array -> allows for addition of direction
         out: produces line with a a kink
         state 0: lattice size free
         state 1: monomer exists
@@ -163,19 +166,18 @@ class HexGrid:
         """
 
         # firstly translate first cell
-        self.get_cell(pivot).set_state(2)
+
+        if self.get_cell(pivot).get_state() is not 2 and if self.get_cell(pivot).get_state() is not 0:
+                self.get_cell(pivot + direction).set_state(2)
+                self.get_cell(pivot).set_state(0)
         
-        for n in self.get_cell(pivot).get_six_neighbours():
+        for i, n in enumerate(self.get_cell(pivot).get_six_neighbours()):
             if n.get_state() is not 2 and if n.get_state() is not 0:
-                # verschiebe
-                # rufe fkt rekursiv auf 
+                self.get_cell(pivot + translate_neighbours[i] + direction).set_state(2)
+                n.set_state(0)
 
-        neighbours[direction].set_state(2)
-        self.set_state(0)
-
-        for n in neighbours:
-            if n is not direction and n.get_state() is not 2:
-                n.simple_turn(direction, ) 
+                self.simple_turn(direction, pivot + translate_neighbours[i]) # also make neighbours drag their neighbours along direction
+                
 
 
 
