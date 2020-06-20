@@ -160,26 +160,35 @@ class HexGrid:
         state 0: lattice size free
         state 1: monomer exists
         state 2: pivoting monomer or just moved. it remains static
+        state 3: just moved. shall not be moved by neighbours but rather by next iteration
 
         fct = translate cell by direction
         recursive -> apply functions for all neighbours. some are bound to not change
         """
 
         # firstly translate first cell
+        if pivot[0] <= 0 or pivot[1] <= 0: #if coordinates out of range
+            return 0
 
-        if self.get_cell(pivot).get_state() is not 2 and if self.get_cell(pivot).get_state() is not 0:
-                self.get_cell(pivot + direction).set_state(2)
-                self.get_cell(pivot).set_state(0)
-        
-        for i, n in enumerate(self.get_cell(pivot).get_six_neighbours()):
-            if n.get_state() is not 2 and if n.get_state() is not 0:
-                self.get_cell(pivot + translate_neighbours[i] + direction).set_state(2)
+        if self.get_cell(*pivot).get_state() is not 2 and self.get_cell(*pivot).get_state() is not 0:
+                self.get_cell(*(pivot + direction)).set_state(2)
+                self.get_cell(*pivot).set_state(0)
+                print('hello')
+            
+        for i, n in enumerate(self.get_six_neighbours(*pivot)):
+            if n.get_state() is not 2 and n.get_state() is not 0 and n.get_state() is not 3:
+                self.get_cell(*(pivot + translate_neighbours[i] + direction)).set_state(3)
                 n.set_state(0)
 
                 self.simple_turn(direction, pivot + translate_neighbours[i]) # also make neighbours drag their neighbours along direction
-                
+        
+        for i, n in enumerate(self.get_six_neighbours(*pivot)):
+            self.simple_turn(direction, pivot + translate_neighbours[i] + direction)
+            print(pivot + translate_neighbours[i] + direction)
 
+        #wende jetzt simple turn auf pivot + direction site an
 
+        return 0
 
 class NubotCell:
     """
