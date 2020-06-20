@@ -182,9 +182,9 @@ class HexGrid:
 
                 self.simple_turn(direction, pivot + translate_neighbours[i]) # also make neighbours drag their neighbours along direction
         
-        for i, n in enumerate(self.get_six_neighbours(*pivot)):
-            self.simple_turn(direction, pivot + translate_neighbours[i] + direction)
-            print(pivot + translate_neighbours[i] + direction)
+        #for i, n in enumerate(self.get_six_neighbours(*pivot)):
+            #self.simple_turn(direction, pivot + translate_neighbours[i] + direction)
+            #print(pivot + translate_neighbours[i] + direction)
 
         #wende jetzt simple turn auf pivot + direction site an
 
