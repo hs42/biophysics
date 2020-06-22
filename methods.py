@@ -136,7 +136,9 @@ class HexGrid:
 
         fig = plt.figure()
         ax = fig.add_subplot(1,1,1)
-        ax.scatter(xvals, yvals, c=cellstates, cmap="tab20")
+        scatter = plt.scatter(xvals, yvals, c=cellstates, cmap="tab20")
+        labels = list(set(cellstates))
+        plt.legend(handles=scatter.legend_elements()[0], labels=labels)
 
         return fig, ax
 
@@ -147,11 +149,12 @@ class HexGrid:
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).update()
 
-    def simple_turn(self, direction, pivot):
+    def simple_turn(self, direction, pivot, start=False):
         """
         now moved to grid to get access to neighbours
 
         a first trial to implement a rotating arm
+
         Note that this function is rather a quick hack. 
         You'd rather want to implement it by using bonds and checking if a movement is possible in the first place
         in: expects a line of monomers to start with; initial kink at pivoting monomer must have been initialized by user. direction in {1,...,6 } correspoding to sites of neighbours
@@ -159,28 +162,31 @@ class HexGrid:
         out: produces line with a a kink
         state 0: lattice size free
         state 1: monomer exists
-        state 2: pivoting monomer or just moved. it remains static
+        state 2: just moved. it remains static
         state 3: just moved. shall not be moved by neighbours but rather by next iteration
-
+        state 4: pivoting monomer
         fct = translate cell by direction
         recursive -> apply functions for all neighbours. some are bound to not change
         """
 
+        if start:
+            newstarts = []
         # firstly translate first cell
         if pivot[0] <= 0 or pivot[1] <= 0: #if coordinates out of range
-            return 0
+            return 
 
-        if self.get_cell(*pivot).get_state() is not 2 and self.get_cell(*pivot).get_state() is not 0:
+        if self.get_cell(*pivot).get_state() not in [0, 2]:
                 self.get_cell(*(pivot + direction)).set_state(2)
                 self.get_cell(*pivot).set_state(0)
-                print('hello')
             
         for i, n in enumerate(self.get_six_neighbours(*pivot)):
-            if n.get_state() is not 2 and n.get_state() is not 0 and n.get_state() is not 3:
+            if n.get_state() not in [0, 2, 3]:
                 self.get_cell(*(pivot + translate_neighbours[i] + direction)).set_state(3)
                 n.set_state(0)
 
                 self.simple_turn(direction, pivot + translate_neighbours[i]) # also make neighbours drag their neighbours along direction
+                if start:
+                    newstarts += [pivot + translate_neighbours[i] + direction]
         
         #for i, n in enumerate(self.get_six_neighbours(*pivot)):
             #self.simple_turn(direction, pivot + translate_neighbours[i] + direction)
@@ -188,7 +194,16 @@ class HexGrid:
 
         #wende jetzt simple turn auf pivot + direction site an
 
-        return 0
+
+        if start:
+            for i,j in np.ndindex(self.height, self.width):
+                if self.get_cell(i,j).get_state() == 3:
+                    self.get_cell(i,j).set_state(1)
+            for newstart in newstarts:
+                self.simple_turn(direction, newstart, start=True)
+
+
+        return 
 
 class NubotCell:
     """
