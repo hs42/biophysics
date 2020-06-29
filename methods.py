@@ -160,7 +160,7 @@ class HexGrid:
         in: expects a line of monomers to start with; initial kink at pivoting monomer must have been initialized by user. direction in {1,...,6 } correspoding to sites of neighbours
             pivot = np.array([x,y]), direction also np-array -> allows for addition of direction
         out: produces line with a a kink
-        state 0: lattice size free
+        state 0: lattice site free
         state 1: monomer exists
         state 2: just moved. it remains static
         state 3: just moved. shall not be moved by neighbours but rather by next iteration
