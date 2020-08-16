@@ -138,7 +138,7 @@ class HexGrid:
         ax = fig.add_subplot(1,1,1)
         scatter = plt.scatter(xvals, yvals, c=cellstates, cmap="tab20")
         labels = list(set(cellstates))
-        plt.legend(handles=scatter.legend_elements()[0], labels=labels)
+        #plt.legend(handles=scatter.legend_elements()[0], labels=labels)
 
         return fig, ax
 
@@ -148,6 +148,11 @@ class HexGrid:
         
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).update()
+
+    def reset_states(self):
+        for i,j in np.ndindex(self.height, self.width):
+            if self.get_cell(i,j).get_state() != 0:
+                self.get_cell(i,j).set_state(1)        
 
     def simple_turn(self, direction, pivot, start=False):
         """
