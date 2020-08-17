@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-translate_neighbours = [np.array([-1, 1]), np.array([0, 1]), np.array([-1, 0]), np.array([1, 0]), np.array([-1, -1]), np.array([-1, 0])]
+translate_neighbours = [np.array([-1, 1]), np.array([0, 1]), np.array([-1, 0]), np.array([1, 0]), np.array([0, -1]), np.array([1, -1])]
 
 class Cell:
     """ The automaton class implements the topology (here a simple 1-D lattice), the
@@ -101,7 +101,7 @@ class HexGrid:
 
         return [self.cells[left][up], self.cells[x][up], 
                 self.cells[left][y], self.cells[right][y], 
-                self.cells[down][left], self.cells[down][y]]
+                self.cells[x][down], self.cells[right][down]]
 
     def get_cell(self, x, y, w=0):
         x = (x-w)%self.width
@@ -145,6 +145,13 @@ class HexGrid:
     def perform_step(self):
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).simple_forward(self.get_six_neighbours(i,j))
+        
+        for i,j in np.ndindex(self.height, self.width):
+            self.get_cell(i,j).update()
+
+    def perform_step_upward(self):
+        for i,j in np.ndindex(self.height, self.width):
+            self.get_cell(i,j).simple_upward(self.get_six_neighbours(i,j))
         
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).update()
@@ -241,6 +248,15 @@ class NubotCell:
             return 1
         if self.state == 1 and neighbours[2].get_state() == 1 and neighbours[3].get_state() == 0:#1=occupied, 0=unoccupied
             neighbours[3].queue_state(1) #update next neighbour
+
+        return 0
+
+    def simple_upward(self, neighbours=[]):
+        #neighbours is list of six adjacent neighbour cells in order as defined in HexGrid.get_six_neighbours()
+        if not neighbours:# if list is empty
+            return 1
+        if self.state == 1 and neighbours[4].get_state() == 1 and neighbours[1].get_state() == 0:#1=occupied, 0=unoccupied
+            neighbours[1].queue_state(1) #update next neighbour
 
         return 0
 
