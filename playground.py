@@ -21,7 +21,7 @@ for _ in range(steps):
     grid.perform_step()
 
 grid.plot_states([0,1,2,3])
-plt.title(f"after {steps} steps")
+plt.title(f"after elongating monomers")
 plt.show()
 
 
@@ -32,6 +32,7 @@ grid.get_cell(4,1).set_state(2)
 grid.get_cell(5,1).set_state(1)
 
 grid.plot_states([0,1,2,3])
+
 plt.show()
 
 grid.simple_turn(np.array([-1, 1]), np.array([5, 1]), start=True)
@@ -60,7 +61,7 @@ for _ in range(steps):
     grid.perform_step()
 
 grid.plot_states([0,1,2,3])
-plt.title(f"after turning")
+plt.title(f"after extending along x")
 plt.show()
 steps = 4
 for _ in range(steps):
@@ -72,6 +73,12 @@ for _ in range(steps):
 
 
 grid.plot_states([0,1,2,3])
-plt.title(f"after turning")
+plt.title(f"after extending along y")
+plt.show()
+
+grid.draw(1, 1)
+
+grid.plot_states([0,1,2,3])
+plt.title(f"after deciding which lattice sites should remain occupied")
 plt.show()
 

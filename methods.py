@@ -156,6 +156,12 @@ class HexGrid:
         for i,j in np.ndindex(self.height, self.width):
             self.get_cell(i,j).update()
 
+    def draw(self, lower_left_corner_x, lower_left_corner_y):
+        mask = [[0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 0]]
+        
+        for i, j in np.ndindex(6, 6):
+            self.get_cell(i + lower_left_corner_x, j + lower_left_corner_x).set_state(mask[5-j][5-i])        
+        
     def reset_states(self):
         for i,j in np.ndindex(self.height, self.width):
             if self.get_cell(i,j).get_state() != 0:
