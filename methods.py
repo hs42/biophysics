@@ -134,13 +134,13 @@ class HexGrid:
                     cellstates += [state]
 
 
-        fig = plt.figure()
-        ax = fig.add_subplot(1,1,1)
-        scatter = plt.scatter(xvals, yvals, c=cellstates, cmap="tab20")
+        #fig = plt.figure()
+        #ax = fig.add_subplot(1,1,1)
+        scatter = plt.scatter(xvals, yvals, c=cellstates, cmap="tab20", vmin=0, vmax=10)
         labels = list(set(cellstates))
         #plt.legend(handles=scatter.legend_elements()[0], labels=labels)
 
-        return fig, ax
+        #return fig, ax
 
     def perform_step(self):
         for i,j in np.ndindex(self.height, self.width):
@@ -157,9 +157,15 @@ class HexGrid:
             self.get_cell(i,j).update()
 
     def draw(self, lower_left_corner_x, lower_left_corner_y):
-        mask = [[0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [0, 1, 1, 1, 1, 0]]
+        mask =np.array(
+                        [[0, 1, 0, 0, 1, 0], 
+                        [0, 0, 0, 0, 0, 0], 
+                        [0, 0, 1, 1, 0, 0], 
+                        [0, 0, 0, 0, 0, 0], 
+                        [1, 0, 0, 0, 0, 1], 
+                        [0, 1, 1, 1, 1, 0]])
         
-        for i, j in np.ndindex(6, 6):
+        for i, j in np.ndindex(mask.shape):
             self.get_cell(i + lower_left_corner_x, j + lower_left_corner_x).set_state(mask[5-j][5-i])        
         
     def reset_states(self):
